@@ -1,0 +1,24 @@
+Parameters:
+  ParamInstanceTpe:
+    Type: String
+    Default: 't2.micro'
+    AllowedValues:
+      - t2.micro
+      - m1.nano
+      - m2.nano
+
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: AWS KeyName
+
+Resources:
+  MyEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: 'ami-0470e33cd681b2476'
+      InstanceType:
+        Ref: ParamInstanceTpe
+      KeyName:
+        Ref: KeyName
+      SecurityGroups:
+        - default

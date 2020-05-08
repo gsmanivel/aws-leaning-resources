@@ -1,0 +1,49 @@
+Parameters:
+  ParamInstanceTpe:
+    Type: String
+    Default: 't2.micro'
+    AllowedValues:
+      - t2.micro
+      - m1.nano
+      - m2.nano
+
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: AWS KeyName
+
+  MyAvailabilityZone:
+    Type: AWS::EC2::AvailabilityZone::Name
+    Default: ap-south-1a
+    AllowedValues:
+      - ap-south-1a
+      - ap-south-1b
+      - ap-south-1c
+
+Resources:
+  MyEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+
+      ImageId: 'ami-0470e33cd681b2476'
+
+      InstanceType:
+        Ref: ParamInstanceTpe
+
+      AvailabilityZone:
+        Ref: MyAvailabilityZone
+
+      KeyName:
+        Ref: KeyName
+
+      SecurityGroups:
+        - !Ref NewSecurityGroup
+
+  NewSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: New SecurityGroup
+      SecurityGroupIngress:
+        IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0

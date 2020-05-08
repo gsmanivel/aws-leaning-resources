@@ -1,0 +1,8 @@
+Resources:
+  Machine1:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: 'ami-0470e33cd681b2476'
+      InstanceType: t2.micro
+      SecurityGroups:
+        - default
