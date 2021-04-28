@@ -1,0 +1,63 @@
+Parameters:
+  MyKey:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: KeyName
+
+  MyEnv:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - test
+
+Conditions:
+  EIPCondition: !Equals [!Ref MyEnv , dev]
+
+Mappings:
+  ImageMapping:
+    ap-south-1:
+      LINUX2AMI: ami-0470e33cd681b2476
+    us-east-1:
+      LINUX2AMI: ami-0323c3dd2da7fb37d
+    us-east-2:
+      LINUX2AMI: ami-0f7919c33c90f5b58
+
+  InstanceTypeMapping:
+    dev:
+      InstanceType: t2.micro
+    test:
+      InstanceType: t2.small
+
+Resources:
+  MyEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap
+        - ImageMapping
+        - !Ref 'AWS::Region'
+        - LINUX2AMI
+
+      InstanceType: !FindInMap
+        - InstanceTypeMapping
+        - !Ref MyEnv
+        - InstanceType
+
+      KeyName: !Ref MyKey
+      SecurityGroups:
+        - !Ref NewSecurityGroup
+
+  NewSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: New SecurityGroup
+      SecurityGroupIngress:
+        IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+
+  NewEIP:
+    Type: AWS::EC2::EIP
+    Condition: EIPCondition
+    Properties:
+      InstanceId: MyEC2
